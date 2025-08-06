@@ -31,6 +31,7 @@ export default async function Layout({
         preloadedUser={preloadedUser}
         preloadedProducts={preloadedProducts}
       />
+
       {children}
     </div>
   );
