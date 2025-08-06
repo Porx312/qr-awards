@@ -50,7 +50,8 @@ export const updateUsername = mutation({
     // ✅ Validar todos los args con Zod
     const parsed = profileSchema.safeParse(args);
     if (!parsed.success) {
-      throw new Error(parsed.error.errors[0].message); // o lánzalo todo
+      const firstError = parsed.error.errors[0];
+      throw new Error(firstError ? firstError.message : "Invalid input"); // o lánzalo todo
     }
 
     const data = parsed.data;
