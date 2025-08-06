@@ -4,7 +4,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action, internalMutation, mutation, query } from "./_generated/server";
 import { polar } from "./subscriptions";
-import { username } from "./utils/validators";
+import { profileSchema } from "./utils/validators";
 
 export const getUser = query({
   handler: async (ctx) => {
@@ -32,19 +32,45 @@ export const getUser = query({
 
 export const updateUsername = mutation({
   args: {
-    username: v.string(),
+    username: v.optional(v.string()),
+    role: v.optional(v.union(v.literal("business"), v.literal("client"))),
+    businessName: v.optional(v.string()),
+    location: v.optional(v.string()),
+    city: v.optional(v.string()),
+    exactAddress: v.optional(v.string()),
+    businessCategory: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return;
-    }
-    const validatedUsername = username.safeParse(args.username);
+    if (!userId) throw new Error("Unauthorized");
 
-    if (!validatedUsername.success) {
-      throw new Error(validatedUsername.error.message);
+    const user = await ctx.db.get(userId);
+    if (!user) throw new Error("User not found");
+
+    // ✅ Validar todos los args con Zod
+    const parsed = profileSchema.safeParse(args);
+    if (!parsed.success) {
+      throw new Error(parsed.error.errors[0].message); // o lánzalo todo
     }
-    await ctx.db.patch(userId, { username: validatedUsername.data });
+
+    const data = parsed.data;
+
+    const updates: Record<string, any> = {};
+
+    if (data.username) updates.username = data.username;
+    if (data.role) updates.role = data.role;
+
+    const isBusiness = data.role === "business" || user.role === "business";
+
+    if (isBusiness) {
+      updates.businessName = data.businessName ?? user.businessName;
+      updates.location = data.location ?? user.location;
+      updates.city = data.city ?? user.city;
+      updates.exactAddress = data.exactAddress ?? user.exactAddress;
+      updates.businessCategory = data.businessCategory ?? user.businessCategory;
+    }
+
+    await ctx.db.patch(userId, updates);
   },
 });
 

@@ -17,5 +17,16 @@ export default defineSchema({
     // custom fields
     username: v.optional(v.string()),
     imageId: v.optional(v.id("_storage")),
+
+  // common custom fields
+role: v.optional(v.union(v.literal("business"), v.literal("client"))),
+
+
+  // fields for businesses
+  businessName: v.optional(v.string()),
+  location: v.optional(v.string()),
+  city: v.optional(v.string()),
+  exactAddress: v.optional(v.string()),
+  businessCategory: v.optional(v.string()),
   }).index("email", ["email"]),
 });

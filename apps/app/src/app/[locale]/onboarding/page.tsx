@@ -11,6 +11,14 @@ import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useFormStatus } from "react-dom";
+import { z } from "zod";
+function zodFieldValidator(schema: z.ZodTypeAny) {
+  return (value: unknown) => {
+    const result = schema.safeParse(value);
+    if (result.success) return; // sin error
+    return result.error.errors[0]?.message || "Invalid value";
+  };
+}
 
 export default function OnboardingUsername() {
   const user = useQuery(api.users.getUser);
@@ -51,10 +59,10 @@ export default function OnboardingUsername() {
       <div className="flex flex-col items-center gap-2">
         <span className="mb-2 select-none text-6xl">👋</span>
         <h3 className="text-center text-2xl font-medium text-primary">
-          Welcome!
+         Bienvenido!
         </h3>
         <p className="text-center text-base font-normal text-primary/60">
-          Let's get started by choosing a username.
+         Eres un cliente o un negocio?
         </p>
       </div>
       <form
@@ -69,36 +77,31 @@ export default function OnboardingUsername() {
           <label htmlFor="username" className="sr-only">
             Username
           </label>
-          <form.Field
-            name="username"
-            validators={{
-              onSubmit: validators.username,
-            }}
-            // biome-ignore lint/correctness/noChildrenProp: tanstack best practice
-            children={(field) => (
-              <Input
-                placeholder="Username"
-                autoComplete="off"
-                required
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className={`bg-transparent ${
-                  field.state.meta?.errors.length > 0 &&
-                  "border-destructive focus-visible:ring-destructive"
-                }`}
-              />
-            )}
-          />
+         <form.Field
+  name="username"
+  validators={{
+    onSubmit: zodFieldValidator(validators.profileSchema.shape.username),
+  }}
+  // biome-ignore lint/correctness/noChildrenProp: tanstack best practice
+  children={(field) => (
+    <Input
+      placeholder="Username"
+      autoComplete="off"
+      required
+      value={field.state.value}
+      onBlur={field.handleBlur}
+      onChange={(e) => field.handleChange(e.target.value)}
+      className={`bg-transparent ${
+        field.state.meta?.errors.length > 0 &&
+        "border-destructive focus-visible:ring-destructive"
+      }`}
+    />
+  )}
+/>
+
         </div>
 
-        <div className="flex flex-col">
-          {form.state.fieldMeta.username?.errors.length > 0 && (
-            <span className="mb-2 text-sm text-destructive dark:text-destructive-foreground">
-              {form.state.fieldMeta.username?.errors.join(" ")}
-            </span>
-          )}
-        </div>
+      
 
         <Button type="submit" size="sm" className="w-full">
           {pending ? <Loader2 className="animate-spin" /> : "Continue"}
