@@ -64,7 +64,11 @@ export function Navigation({
           <Link href="/" className="flex h-10 items-center gap-1">
             <h2>QR-Awards</h2>
           </Link> 
-        
+          {
+            user.role === "business" ? 
+            <h2>you are business</h2> : <h2>you are not business</h2>
+          
+          }
         </div>
 
         <div className="flex h-10 items-center gap-3">

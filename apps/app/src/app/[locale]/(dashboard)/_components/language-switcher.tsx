@@ -8,7 +8,6 @@ import {
   SelectTrigger,
 } from "@v1/ui/select";
 import { Languages } from "lucide-react";
-
 export function LanguageSwitcher() {
   const changeLocale = useChangeLocale();
   const locale = useCurrentLocale();
