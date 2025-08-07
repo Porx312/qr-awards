@@ -11,26 +11,12 @@ import { ExternalLink, Plus } from "lucide-react";
 
 export default async function Page() {
   const t = await getScopedI18n("dashboard");
-
   return (
     <>
       <Header title={t("title")} description={t("description")} />
       <div className="flex h-full w-full bg-secondary px-6 py-8 dark:bg-black">
         <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
           <div className="flex w-full flex-col rounded-lg border border-border bg-card dark:bg-black">
-            <div className="flex w-full flex-col rounded-lg p-6">
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-medium text-primary">
-                  {t("bodyTitle")}
-                </h2>
-                <p className="text-sm font-normal text-primary/60">
-                  {t("bodyDescription")}
-                </p>
-              </div>
-            </div>
-            <div className="flex w-full px-6">
-              <div className="w-full border-b border-border" />
-            </div>
             <div className="relative mx-auto flex w-full  flex-col items-center p-6">
               <div className="relative flex w-full flex-col items-center justify-center gap-6 overflow-hidden rounded-lg border border-border bg-secondary px-6 py-24 dark:bg-card">
                 <div className="z-10 flex max-w-[460px] flex-col items-center gap-4">

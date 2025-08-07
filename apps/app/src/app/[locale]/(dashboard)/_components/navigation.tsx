@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@v1/ui/dropdown-menu";
-import { Logo } from "@v1/ui/logo";
 import { cn } from "@v1/ui/utils";
 import { type Preloaded, usePreloadedQuery } from "convex/react";
 import {
@@ -21,7 +20,6 @@ import {
   ChevronUp,
   LogOut,
   Settings,
-  Slash,
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
@@ -210,7 +208,7 @@ export function Navigation({
           </DropdownMenu>
         </div>
       </div>
-               <TabBar/> 
+      <TabBar/>
     </nav>
   );
 }
