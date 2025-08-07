@@ -59,6 +59,21 @@ const isDashboardPath = pathname === "/";
             User
           </Link>
         </div>
+         <div
+          className={cn(
+            "flex h-12 items-center border-b-2",
+            isUserPath ? "border-primary" : "border-transparent",
+          )}
+        >
+          <Link
+            href="/reward"
+            className={cn(
+              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
+            )}
+          >
+            Rewards
+          </Link>
+        </div>
         <div
           className={cn(
             "flex h-12 items-center border-b-2",

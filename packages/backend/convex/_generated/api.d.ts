@@ -17,6 +17,7 @@ import type * as init from "../init.js";
 import type * as rewards from "../rewards.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
+import type * as utils_reward from "../utils/reward.js";
 import type * as utils_validators from "../utils/validators.js";
 import type * as web from "../web.js";
 
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   rewards: typeof rewards;
   subscriptions: typeof subscriptions;
   users: typeof users;
+  "utils/reward": typeof utils_reward;
   "utils/validators": typeof utils_validators;
   web: typeof web;
 }>;

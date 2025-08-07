@@ -1,16 +1,18 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { z } from "zod"; // Importa Zod
+import { createRewardFormSchema, updateRewardFormSchema } from "./utils/reward";
 
-// Esquema de validación para premios (puedes mover esto a utils/validators si prefieres)
-const rewardSchema = {
-  businessId: v.id("users"),
-  name: v.string(),
-  description: v.optional(v.string()),
-  requiredStamps: v.number(),
-  validUntil: v.optional(v.string()),
-  createdAt: v.number(),
-};
+// Esquema de validación para premios (ya no es necesario definirlo aquí si usas Zod)
+// const rewardSchema = {
+//   businessId: v.id("users"),
+//   name: v.string(),
+//   description: v.optional(v.string()),
+//   requiredStamps: v.number(),
+//   validUntil: v.optional(v.string()),
+//   createdAt: v.number(),
+// };
 
 // Consultar todos los premios de un negocio
 export const getRewardsByBusiness = query({
@@ -33,13 +35,13 @@ export const getRewardsByBusiness = query({
       .query("rewards")
       .withIndex("byBusiness", (q) => q.eq("businessId", args.businessId))
       .collect();
-
     return rewards;
   },
 });
 
 // Crear un nuevo premio
 export const createReward = mutation({
+  // Define los argumentos de Convex para que coincidan con el esquema de Zod
   args: {
     name: v.string(),
     description: v.optional(v.string()),
@@ -59,24 +61,27 @@ export const createReward = mutation({
       throw new Error("Solo los negocios pueden crear premios");
     }
 
+    // Validar los argumentos de entrada con Zod
+    const validatedArgs = createRewardFormSchema.parse(args);
+
     // Crear el premio
     const rewardId = await ctx.db.insert("rewards", {
       businessId: userId,
-      name: args.name,
-      description: args.description,
-      requiredStamps: args.requiredStamps,
-      validUntil: args.validUntil,
+      name: validatedArgs.name,
+      description: validatedArgs.description,
+      requiredStamps: validatedArgs.requiredStamps,
+      validUntil: validatedArgs.validUntil,
       createdAt: Date.now(),
     });
-
     return { id: rewardId, message: "Premio creado exitosamente" };
   },
 });
 
 // Actualizar un premio existente
 export const updateReward = mutation({
+  // Define los argumentos de Convex para que coincidan con el esquema de Zod
   args: {
-    rewardId: v.id("rewards"),
+    rewardId: v.id("rewards"), // El ID del premio sigue siendo necesario
     name: v.optional(v.string()),
     description: v.optional(v.string()),
     requiredStamps: v.optional(v.number()),
@@ -101,14 +106,17 @@ export const updateReward = mutation({
       throw new Error("No tienes permiso para actualizar este premio");
     }
 
+    // Validar los argumentos de entrada con Zod (excluyendo rewardId para la validación del esquema)
+    const { rewardId, ...updateFields } = args;
+    const validatedUpdateFields = updateRewardFormSchema.parse(updateFields);
+
     // Actualizar los campos proporcionados
     await ctx.db.patch(args.rewardId, {
-      name: args.name ?? reward.name,
-      description: args.description ?? reward.description,
-      requiredStamps: args.requiredStamps ?? reward.requiredStamps,
-      validUntil: args.validUntil ?? reward.validUntil,
+      name: validatedUpdateFields.name ?? reward.name,
+      description: validatedUpdateFields.description ?? reward.description,
+      requiredStamps: validatedUpdateFields.requiredStamps ?? reward.requiredStamps,
+      validUntil: validatedUpdateFields.validUntil ?? reward.validUntil,
     });
-
     return { message: "Premio actualizado exitosamente" };
   },
 });
@@ -137,7 +145,6 @@ export const deleteReward = mutation({
 
     // Eliminar el premio
     await ctx.db.delete(args.rewardId);
-
     return { message: "Premio eliminado exitosamente" };
   },
 });
