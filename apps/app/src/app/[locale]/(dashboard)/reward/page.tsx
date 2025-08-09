@@ -13,6 +13,7 @@ import { CreateRewardFormInput, Reward, UpdateRewardFormInput } from "@v1/backen
 import { api } from "@v1/backend/convex/_generated/api"
 import { RewardCard } from "./components/RewardCard"
 import { RewardForm } from "./components/RewardForm"
+import { Id } from "@v1/backend/convex/_generated/dataModel"
 // --- End: Real Convex Hooks and API Imports ---
 
 
@@ -75,7 +76,10 @@ export default function RewardsDashboard() {
     const updateData = formData as UpdateRewardFormInput;
     setIsUpdatingReward(true); // Inicia la carga
     try {
-      await updateReward({ rewardId: editingReward._id, ...updateData }); // Llama a la función de mutación
+     await updateReward({ 
+  rewardId: editingReward._id as Id<"rewards">, 
+  ...updateData 
+});
       toast({
         title: "Premio actualizado",
         description: "El premio ha sido modificado exitosamente.",
@@ -99,7 +103,7 @@ export default function RewardsDashboard() {
     }
     setIsDeletingReward(true); // Inicia la carga
     try {
-      await deleteReward({ rewardId }); // Llama a la función de mutación
+    await deleteReward({ rewardId: rewardId as Id<"rewards"> });
       toast({
         title: "Premio eliminado",
         description: "El premio ha sido eliminado exitosamente.",
