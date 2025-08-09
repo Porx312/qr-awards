@@ -33,8 +33,16 @@ export default defineSchema({
   })
     .index("email", ["email"])
     .index("role", ["role"]),
+    qrCodes: defineTable({
+    code: v.string(), // código corto legible
+    ownerUserId: v.id("users"), // dueño del QR
+    payload: v.string(), // JSON con { userId, code, nonce, ts }
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+   .index("by_code", ["code"])
+    .index("by_owner", ["ownerUserId"]),
 
-  // PREMIOS (recompensas que ofrece un negocio)
   rewards: defineTable({
     businessId: v.id("users"), // must be role = 'business'
     name: v.string(),

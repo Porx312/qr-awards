@@ -37,7 +37,9 @@
   "packageManager": "bun@1.1.26",
   "dependencies": {
     "@auth/core": "0.37.0",
-    "@convex-dev/auth": "^0.0.88"
+    "@convex-dev/auth": "^0.0.88",
+    "@types/qrcode": "^1.5.5",
+    "qrcode": "^1.5.4"
   },
   "version": "0.0.1"
 }

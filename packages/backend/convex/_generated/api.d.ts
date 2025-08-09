@@ -14,6 +14,7 @@ import type * as email_templates_subscriptionEmail from "../email/templates/subs
 import type * as env from "../env.js";
 import type * as http from "../http.js";
 import type * as init from "../init.js";
+import type * as qr from "../qr.js";
 import type * as rewards from "../rewards.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as users from "../users.js";
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   env: typeof env;
   http: typeof http;
   init: typeof init;
+  qr: typeof qr;
   rewards: typeof rewards;
   subscriptions: typeof subscriptions;
   users: typeof users;

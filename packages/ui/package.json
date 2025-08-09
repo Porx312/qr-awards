@@ -42,7 +42,8 @@
     "./popover": "./src/components/popover.tsx",
     "./textarea": "./src/components/textarea.tsx",
     "./use-toast": "./src/hooks/use-toast.ts",
-    "./toast": "./src/hooks/toast.tsx"
+    "./toast": "./src/hooks/toast.tsx",
+    "./separator": "./src/hooks/separator.tsx"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.0",
@@ -53,6 +54,7 @@
     "@radix-ui/react-popover": "^1.1.14",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
+    "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
