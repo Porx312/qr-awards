@@ -1,6 +1,6 @@
 "use client"
 
-import { CreateRewardFormInput, UpdateRewardFormInput, createRewardFormSchema, updateRewardFormSchema, Reward } from "@v1/backend/convex/utils/validator-reward"
+import { CreateRewardFormInput, UpdateRewardFormInput, createRewardFormSchema, updateRewardFormSchema, Reward } from "@v1/backend/convex/utils/reward"
 import { cn } from "@v1/ui/utils"
 import { useState, useEffect } from "react"
 import { Button } from "@v1/ui/button"

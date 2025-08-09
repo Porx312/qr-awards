@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@v1/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@v1/ui/dropdown-menu"
 import { MoreHorizontalIcon, EditIcon, Trash2Icon, CalendarIcon, StampIcon } from 'lucide-react'
-import { Reward } from "@v1/backend/convex/utils/validator-reward"
+import { Reward } from "@v1/backend/convex/utils/reward"
 
 interface RewardCardProps {
   reward: Reward;
