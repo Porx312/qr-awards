@@ -2,8 +2,15 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@v1/ui/card"
 import QrCard from "./components/QrCard"
+import { useQuery } from "convex/react";
+import { api } from "@v1/backend/convex/_generated/api";
 
 export default function Page() {
+    const user = useQuery(api.users.currentUser);
+
+  if (user === undefined) return <p>Cargando...</p>;
+  if (user === null) return <p>Usuario no encontrado</p>;
+
   return (
       <main className="min-h-svh bg-muted/20">
         <div className="mx-auto max-w-4xl p-6">
@@ -15,7 +22,7 @@ export default function Page() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <QrCard defaultOwnerUserId={"jx74tfbrgwq02fgaf9n4928pf57n7ht2"} />
+              <QrCard defaultOwnerUserId={user._id} />
             </CardContent>
           </Card>
         </div>
