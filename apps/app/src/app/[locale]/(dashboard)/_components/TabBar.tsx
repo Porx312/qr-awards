@@ -66,6 +66,36 @@ const isDashboardPath = pathname === "/";
           )}
         >
           <Link
+            href="/scanqr"
+            className={cn(
+              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
+            )}
+          >
+            QrScaner
+          </Link>
+        </div>
+              <div
+          className={cn(
+            "flex h-12 items-center border-b-2",
+            isUserPath ? "border-primary" : "border-transparent",
+          )}
+        >
+          <Link
+            href="/subscriptions"
+            className={cn(
+              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
+            )}
+          >
+            Subscriptions
+          </Link>
+        </div>
+          <div
+          className={cn(
+            "flex h-12 items-center border-b-2",
+            isUserPath ? "border-primary" : "border-transparent",
+          )}
+        >
+          <Link
             href="/qr"
             className={cn(
               `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,

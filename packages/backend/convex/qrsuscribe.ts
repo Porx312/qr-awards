@@ -1,7 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server"
 import { v } from "convex/values"
-import { mutation, query } from "./_generated/server"
-import type { Id, Doc } from "./_generated/dataModel"
+import { mutation, query } from "./_generated/server.js"
+import type { Id, Doc } from "./_generated/dataModel.js"
 
 const MAX_SKEW_MS = 5 * 60 * 1000 // 5 minutos
 

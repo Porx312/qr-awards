@@ -19,7 +19,12 @@ export default defineSchema({
     // Custom fields
     username: v.optional(v.string()),
     imageId: v.optional(v.id("_storage")),
-    role: v.union(v.literal("business"), v.literal("client")),
+ role: v.optional(
+  v.union(
+    v.literal("business"),
+    v.literal("client")
+  )
+),
 
     // Business-specific fields
     businessName: v.optional(v.string()),

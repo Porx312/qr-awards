@@ -3,17 +3,16 @@
 import * as React from "react"
 import dynamic from "next/dynamic"
 import { useMutation } from "convex/react"
-import { QrCode, Keyboard, CheckCircle2, AlertCircle, Camera } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@v1/ui/tabs"
+import { QrCode, Keyboard, CheckCircle2, Camera } from "lucide-react"
 import { Button } from "@v1/ui/button"
 import { Input } from "@v1/ui/input"
 import { Label } from "@v1/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@v1/ui/card"
-import { Alert, AlertDescription, AlertTitle } from "@v1/ui/alert"
 import Image from "next/image"
 import { useToast } from "@v1/ui/use-toast"
 import { api } from "@v1/backend/convex/_generated/api"
 import { parseQrPayload } from "@/locales/qrutil"
+import { cn } from "@v1/ui/utils"
 
 type Business = {
   id: string
@@ -31,34 +30,32 @@ type SubscribeResponse = {
   qr?: { ownerUserId: string; code: string; payload: string; updatedAt: number }
 }
 
-const QrReader = dynamic(
-  async () => {
-    const mod = await import("react-qr-reader")
-    return mod.QrReader
-  },
-  {
-    ssr: false,
-    loading: () => (
-      <div className="grid place-items-center h-[280px] rounded-md border bg-muted/40">
-        <span className="text-sm text-muted-foreground">Cargando cámara…</span>
-      </div>
-    ),
-  },
-)
+const QrScanner = dynamic(() => import("./qr-scanner-client"), {
+  ssr: false,
+  loading: () => (
+    <div className="grid h-[280px] place-items-center rounded-md border bg-muted/40">
+      <span className="text-sm text-muted-foreground">Cargando cámara…</span>
+    </div>
+  ),
+})
 
 export default function SubscribeForm() {
   const { toast } = useToast()
-  const subscribeFromPayload = useMutation(api["qrsubscribe"].subscribeFromPayload)
-  const subscribeByCode = useMutation(api["qrsubscribe"].subscribeByCode)
+  // Usa el namespace correcto según tu proyecto: "qrsuscribe"
+  const subscribeFromPayload = useMutation(api.qrsuscribe.subscribeFromPayload)
+  const subscribeByCode = useMutation(api.qrsuscribe.subscribeByCode)
 
-  const [activeTab, setActiveTab] = React.useState<"qr" | "code">("qr")
+  const [mode, setMode] = React.useState<"scan" | "code">("scan")
   const [lastNonce, setLastNonce] = React.useState<string>("")
   const [submitting, setSubmitting] = React.useState(false)
   const [code, setCode] = React.useState("")
   const [result, setResult] = React.useState<{ business: Business; info?: SubscribeResponse["qr"] } | null>(null)
   const [error, setError] = React.useState<string | null>(null)
 
-  React.useEffect(() => setError(null), [activeTab])
+  function switchTo(newMode: "scan" | "code") {
+    setMode(newMode)
+    setError(null)
+  }
 
   async function doSubscribe(resolver: () => Promise<SubscribeResponse>) {
     if (submitting) return
@@ -71,16 +68,15 @@ export default function SubscribeForm() {
         toast({ title: "No fue posible suscribirte", description: "Inténtalo nuevamente.", variant: "destructive" })
         return
       }
-      // Nota: Si tienes datos públicos del negocio, puedes buscarlos por businessId
       setResult({
-        business: { id: res.businessId || "negocio", name: "Negocio", logoUrl: "", rewardsSummary: "" },
+        business: { id: res.businessId || "negocio", name: "Negocio" },
         info: res.qr,
       })
       toast({
         title: res.alreadySubscribed ? "Ya estabas suscrito" : "¡Suscripción exitosa!",
         description: res.alreadySubscribed ? "Este vínculo ya existía." : "Vinculamos tu cuenta correctamente.",
       })
-    } catch (e) {
+    } catch {
       setError("Ocurrió un error de red o autenticación.")
       toast({ title: "Error", description: "Verifica tu sesión e inténtalo de nuevo.", variant: "destructive" })
     } finally {
@@ -88,15 +84,13 @@ export default function SubscribeForm() {
     }
   }
 
-  function onScanResult(result: any) {
-    const text: string | undefined = result?.getText ? result.getText() : undefined
-    if (!text) return
+  function onScanText(text: string) {
     const parsed = parseQrPayload(text)
     if (!parsed) {
       setError("El QR no contiene un payload válido.")
       return
     }
-    if (parsed.nonce === lastNonce) return // evitar dobles envíos
+    if (parsed.nonce === lastNonce) return // Evitar dobles envíos con el mismo QR
     setLastNonce(parsed.nonce)
     void doSubscribe(
       () =>
@@ -130,76 +124,67 @@ export default function SubscribeForm() {
 
   return (
     <div className="space-y-4">
-      {error ? (
-        <Alert variant="destructive" role="alert" aria-live="assertive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Ocurrió un problema</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      ) : null}
+      <div className="flex w-full items-center gap-2">
+        <Button
+          type="button"
+          variant={mode === "scan" ? "default" : "outline"}
+          className="flex-1 gap-2"
+          onClick={() => switchTo("scan")}
+        >
+          <QrCode className="h-4 w-4" />
+          Escanear QR
+        </Button>
+        <Button
+          type="button"
+          variant={mode === "code" ? "default" : "outline"}
+          className="flex-1 gap-2"
+          onClick={() => switchTo("code")}
+        >
+          <Keyboard className="h-4 w-4" />
+          Código manual
+        </Button>
+      </div>
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "qr" | "code")} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="qr" className="gap-2">
-            <QrCode className="h-4 w-4" />
-            {"Escanear QR"}
-          </TabsTrigger>
-          <TabsTrigger value="code" className="gap-2">
-            <Keyboard className="h-4 w-4" />
-            {"Código"}
-          </TabsTrigger>
-        </TabsList>
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-        <TabsContent value="qr" className="mt-4">
-          <div className="space-y-3">
-            <div className={cn("overflow-hidden rounded-md border")}>
-              <QrReader
-                constraints={{ facingMode: "environment" }}
-                onResult={(result: any, _err: any) => {
-                  if (result) onScanResult(result)
-                }}
-                videoContainerStyle={{ width: "100%", borderRadius: 6 }}
-                videoStyle={{ width: "100%", display: "block" }}
-                className="w-full [&_video]:w-full"
-              />
-            </div>
-            <p className="text-sm text-muted-foreground">Apunta la cámara al código QR del negocio o del cliente.</p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Camera className="h-3.5 w-3.5" />
-              <span>{"Necesitamos permiso de cámara para leer el QR."}</span>
-            </div>
+      {mode === "scan" ? (
+        <div className="space-y-3">
+          <div className={cn("overflow-hidden rounded-md border")}>
+            <QrScanner onDecode={(text: string) => onScanText(text)} onError={() => {}}  />
           </div>
-        </TabsContent>
+          <p className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Camera className="h-3.5 w-3.5" />
+            Necesitamos permiso de cámara para leer el QR.
+          </p>
+        </div>
+      ) : (
+        <form className="space-y-4" onSubmit={handleManualSubmit}>
+          <div className="grid gap-2">
+            <Label htmlFor="code">Código del negocio</Label>
+            <Input
+              id="code"
+              name="code"
+              placeholder="Ej: 8MQMVS8U"
+              inputMode="text"
+              autoComplete="one-time-code"
+              value={code}
+              onChange={(e) => {
+                const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")
+                setCode(v)
+              }}
+              maxLength={16}
+              aria-describedby="code-help"
+            />
+            <p id="code-help" className="text-xs text-muted-foreground">
+              Este es el código corto que aparece junto al QR.
+            </p>
+          </div>
 
-        <TabsContent value="code" className="mt-4">
-          <form className="space-y-4" onSubmit={handleManualSubmit}>
-            <div className="grid gap-2">
-              <Label htmlFor="code">Código del negocio</Label>
-              <Input
-                id="code"
-                name="code"
-                placeholder="Ej: 8MQMVS8U"
-                inputMode="text"
-                autoComplete="one-time-code"
-                value={code}
-                onChange={(e) => {
-                  const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")
-                  setCode(v)
-                }}
-                maxLength={16}
-                aria-describedby="code-help"
-              />
-              <p id="code-help" className="text-xs text-muted-foreground">
-                Este es el código corto que aparece junto al QR.
-              </p>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Procesando…" : "Suscribirme"}
-            </Button>
-          </form>
-        </TabsContent>
-      </Tabs>
+          <Button type="submit" className="w-full" disabled={submitting}>
+            {submitting ? "Procesando…" : "Suscribirme"}
+          </Button>
+        </form>
+      )}
     </div>
   )
 }
