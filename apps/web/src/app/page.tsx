@@ -51,8 +51,12 @@ export default function LandingPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-orange-500 hover:bg-orange-600 text-lg px-8 py-3">
-              Comenzar Gratis
+             <a
+              href={process.env.NEXT_PUBLIC_APP_URL}
+            >
+              Inicia Seccion
               <ArrowRight className="ml-2 w-5 h-5" />
+            </a>
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 py-3 bg-transparent">
               Ver Demo
