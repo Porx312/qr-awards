@@ -43,9 +43,12 @@
     "./textarea": "./src/components/textarea.tsx",
     "./use-toast": "./src/hooks/use-toast.ts",
     "./toast": "./src/hooks/toast.tsx",
-    "./separator": "./src/hooks/separator.tsx",
-    "./tabs": "./src/hooks/tabs.tsx",
-    "./alert": "./src/hooks/alert.tsx"
+    "./separator": "./src/components/separator.tsx",
+    "./tabs": "./src/components/tabs.tsx",
+    "./alert": "./src/components/alert.tsx",
+    "./skeleton": "./src/components/skeleton.tsx",
+    "./progress": "./src/components/progress.tsx",
+    "./badge": "./src/components/badge.tsx"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.0",
@@ -54,6 +57,7 @@
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-progress": "^1.1.7",
     "@radix-ui/react-scroll-area": "^1.1.0",
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-separator": "^1.1.7",
