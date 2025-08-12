@@ -19,6 +19,7 @@ import type * as qrstamps from "../qrstamps.js";
 import type * as qrsuscribe from "../qrsuscribe.js";
 import type * as rewards from "../rewards.js";
 import type * as stamps from "../stamps.js";
+import type * as subs from "../subs.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as subscriptionsqr from "../subscriptionsqr.js";
 import type * as users from "../users.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   qrsuscribe: typeof qrsuscribe;
   rewards: typeof rewards;
   stamps: typeof stamps;
+  subs: typeof subs;
   subscriptions: typeof subscriptions;
   subscriptionsqr: typeof subscriptionsqr;
   users: typeof users;

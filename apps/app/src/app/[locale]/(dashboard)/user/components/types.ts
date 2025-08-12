@@ -1,7 +1,9 @@
+import { Id } from "@v1/backend/convex/_generated/dataModel"
+
 export type Role = "business" | "client"
 
 export type User = {
-  _id: string
+  _id: Id<"users">
   name?: string
   email?: string
   phone?: string
@@ -18,8 +20,8 @@ export type User = {
 }
 
 export type Reward = {
-  _id: string
-  businessId: string
+  _id: Id<"rewards">
+  businessId: Id<"users">
   name: string
   description?: string
   requiredStamps: number
@@ -28,32 +30,32 @@ export type Reward = {
 }
 
 export type Stamp = {
-  _id: string
-  clientId: string
-  businessId: string
+  _id: Id<"stamps">
+  clientId: Id<"users">
+  businessId: Id<"users">
   quantity: number
   grantedAt: number
 }
 
 export type Subscription = {
-  _id: string
-  clientId: string
-  businessId: string
+  _id: Id<"subscriptions">
+  clientId: Id<"users">
+  businessId: Id<"users">
   subscribedAt: number
 }
 
 export type AggregatedReward = {
-  rewardId: string
+  rewardId: Id<"rewards">
   name: string
   description?: string
   requiredStamps: number
   validUntil?: string
-  progress: number // sellos actuales del cliente aplicables a esta recompensa
+  progress: number
   canRedeem: boolean
 }
 
 export type AggregatedBusiness = {
-  businessId: string
+  businessId: Id<"users">
   businessName: string
   businessCategory: string
   city: string
@@ -61,13 +63,13 @@ export type AggregatedBusiness = {
 }
 
 export type AggregatedSubscription = {
-  clientId: string
+  clientId: Id<"users">
   business: AggregatedBusiness
   totalStamps: number
   rewards: AggregatedReward[]
 }
 
 export type ClientSubscriptions = {
-  clientId: string
+  clientId: Id<"users">
   subscriptions: AggregatedSubscription[]
 }

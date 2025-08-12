@@ -10,56 +10,63 @@ import { Separator } from "@v1/ui/separator"
 import { Progress } from "@v1/ui/progress"
 import { useToast } from "@v1/ui/use-toast"
 import type { AggregatedSubscription } from "./types"
-import { redeemRewardAction } from "../server-actions"
-import { cn } from "@v1/ui/utils"
 import PunchCard from "./punch-card"
+import { cn } from "@v1/ui/utils"
+import { api } from "@v1/backend/convex/_generated/api"
+import { useMutation } from "convex/react"
+import { Id } from "@v1/backend/convex/_generated/dataModel"
+
 
 type Props = {
   data: AggregatedSubscription
   layout?: "grid" | "list"
-  onChange?: (updated: AggregatedSubscription) => void
 }
 
-export default function BusinessCard({ data, layout = "grid", onChange = () => {} }: Props) {
+export default function BusinessCard({ data, layout = "grid" }: Props) {
   const { toast } = useToast()
-  const [pendingId, startTransition] = React.useTransition()
+  const [isPending, setIsPending] = React.useState(false)
+
+  const redeemRewardMutation = useMutation(api.subs.redeemReward)
 
   const topReward = data.rewards[0]
 
-if (!topReward) {
-  return (
-    <Card>
-      <CardContent>
-        <p>No hay recompensas disponibles.</p>
-      </CardContent>
-    </Card>
-  );
-}
+  if (!topReward) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-muted-foreground">No hay recompensas disponibles.</p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const completed = Math.min(topReward.progress, topReward.requiredStamps)
   const pct = Math.min(100, Math.round((topReward.progress / topReward.requiredStamps) * 100))
 
-  function redeem(rewardId: string) {
-    startTransition(async () => {
-      try {
-        const updated = await redeemRewardAction({
-          clientId: data.clientId,
-          businessId: data.business.businessId,
-          rewardId,
-        })
-        onChange(updated)
-        toast({
-          title: "¡Recompensa canjeada!",
-          description: "Tus sellos han sido utilizados para reclamar tu beneficio.",
-        })
-      } catch (e: any) {
-        toast({
-          title: "No se pudo canjear",
-          description: e?.message ?? "Intenta de nuevo.",
-          variant: "destructive",
-        })
-      }
-    })
+  async function redeem(rewardId: string): Promise<void> {
+    if (isPending) return
+
+    setIsPending(true)
+    try {
+    await redeemRewardMutation({
+  businessId: data.business.businessId,
+  rewardId: rewardId as Id<"rewards">,
+})
+
+      toast({
+        title: "¡Recompensa canjeada!",
+        description: "Tus sellos han sido utilizados para reclamar tu beneficio.",
+      })
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : "Intenta de nuevo."
+      toast({
+        title: "No se pudo canjear",
+        description: errorMessage,
+        variant: "destructive",
+      })
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -140,11 +147,11 @@ if (!topReward) {
                 <div className="mt-3 flex gap-2">
                   <Button
                     className="flex-1"
-                    disabled={!topReward.canRedeem || !!pendingId}
+                    disabled={!topReward.canRedeem || isPending}
                     onClick={() => redeem(topReward.rewardId)}
                   >
                     <BadgeCheck className="h-4 w-4 mr-2" />
-                    {topReward.canRedeem ? "Canjear recompensa" : "Aún no disponible"}
+                    {isPending ? "Canjeando..." : topReward.canRedeem ? "Canjear recompensa" : "Aún no disponible"}
                   </Button>
                 </div>
               </div>
@@ -176,11 +183,11 @@ if (!topReward) {
                       <Button
                         variant="outline"
                         size="sm"
-                        disabled={!r.canRedeem || !!pendingId}
+                        disabled={!r.canRedeem || isPending}
                         onClick={() => redeem(r.rewardId)}
                       >
                         <BadgeCheck className="h-4 w-4 mr-2" />
-                        {r.canRedeem ? "Canjear" : "Progresando..."}
+                        {isPending ? "Canjeando..." : r.canRedeem ? "Canjear" : "Progresando..."}
                       </Button>
                     </div>
                   </div>
