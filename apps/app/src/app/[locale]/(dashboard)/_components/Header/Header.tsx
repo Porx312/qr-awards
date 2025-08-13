@@ -23,8 +23,6 @@ import { useAuthActions } from "@convex-dev/auth/react"
 import { useQuery } from "convex/react"
 import { useRouter } from "next/navigation"
 import { api } from "@v1/backend/convex/_generated/api"
-import { ThemeSwitcher } from "../theme-switcher"
-import { cn } from "@v1/ui/utils"
 
 const Menus = [
   {
