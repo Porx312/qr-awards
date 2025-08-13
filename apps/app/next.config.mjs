@@ -4,7 +4,10 @@ import { withSentryConfig } from "@sentry/nextjs";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["lh3.googleusercontent.com"],  // <-- Add this line
+    domains: [
+      "lh3.googleusercontent.com",
+      "combative-meerkat-251.convex.cloud" // <-- nuevo dominio permitido
+    ],
   },
 };
 

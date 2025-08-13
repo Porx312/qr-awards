@@ -73,13 +73,15 @@ export default function BusinessCard({ data, layout = "grid" }: Props) {
     <Card className={cn("overflow-hidden", layout === "list" && "flex flex-col sm:flex-row")}>
       <CardHeader className={cn(layout === "list" ? "sm:w-80" : "")}>
         <div className="flex items-center gap-3">
-          <Image
-            src={data.business.image ?? "/placeholder.svg?height=80&width=80&query=business%20logo"}
-            alt={data.business.businessName}
-            width={48}
-            height={48}
-            className="h-12 w-12 rounded-md border object-cover bg-muted"
-          />
+           {data.business.image  ? (
+                  <img
+                    className="h-12 w-12 rounded-md border object-cover bg-muted"
+                    alt={data.business.businessName}
+                    src={data.business.image || "/placeholder.svg"}
+                  />
+                ) : (
+                  <span className="h-12 w-12  border object-cover bg-muted bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
+                )}
           <div className="min-w-0">
             <CardTitle className="text-base truncate">{data.business.businessName}</CardTitle>
             <CardDescription className="flex items-center gap-2">

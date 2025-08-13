@@ -84,7 +84,9 @@ export const getClientSubscriptionsAggregated = query({
             businessName: business.businessName || business.name || "Negocio sin nombre",
             businessCategory: business.businessCategory || "Sin categoría",
             city: business.city || "Sin ubicación",
-            image: business.image,
+            image: business.imageId
+            ? await ctx.storage.getUrl(business.imageId)
+            : undefined,
           },
           totalStamps,
           rewards: aggregatedRewards,

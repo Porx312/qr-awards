@@ -162,3 +162,33 @@ export const getRewardById = query({
     return reward
   },
 })
+export const getBusinessRewards = query({
+  args: { businessId: v.id("users") },
+  handler: async (ctx, { businessId }) => {
+    return await ctx.db
+      .query("rewards")
+      .withIndex("byBusiness", (q) => q.eq("businessId", businessId))
+      .collect()
+  },
+})
+
+// Get redemptions for a business
+export const getBusinessRedemptions = query({
+  args: { businessId: v.id("users") },
+  handler: async (ctx, { businessId }) => {
+    const redemptions = await ctx.db
+      .query("redemptions")
+      .withIndex("byBusiness", (q) => q.eq("businessId", businessId))
+      .collect()
+
+    const redemptionsWithDetails = await Promise.all(
+      redemptions.map(async (redemption) => {
+        const client = await ctx.db.get(redemption.clientId)
+        const reward = await ctx.db.get(redemption.rewardId)
+        return { ...redemption, client, reward }
+      }),
+    )
+
+    return redemptionsWithDetails
+  },
+})

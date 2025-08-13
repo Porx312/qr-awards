@@ -53,20 +53,10 @@ export function Navigation({
   }
 
   return (
-    <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border px-6">
-      <div className="mx-auto flex w-full  max-w-screen-xl items-center justify-between py-3">
+    <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border px-5">
+      <div className="mx-auto flex w-full   items-center justify-between py-3 px-4">
         <div className="flex h-10 items-center gap-2">
-       {/*    <Link href="/" className="flex h-10 items-center gap-1">
-            <Image src="/logo.png" alt="logo" width={50} height={50} />
-          </Link> */}
-          <Link href="/" className="flex h-10 items-center gap-1">
-            <h2>QR-Awards</h2>
-          </Link> 
-          {
-            user.role === "business" ? 
-            <h2>you are business</h2> : <h2>you are not business</h2>
-          
-          }
+     
         </div>
 
         <div className="flex h-10 items-center gap-3">
@@ -208,7 +198,7 @@ export function Navigation({
           </DropdownMenu>
         </div>
       </div>
-      <TabBar/>
+      <TabBar />
     </nav>
   );
 }

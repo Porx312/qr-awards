@@ -1,6 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server"
 import { query } from "./_generated/server"
 import type { Doc } from "./_generated/dataModel"
+import { v } from "convex/values"
 
 // Devuelve las suscripciones "del otro lado" según el rol del usuario.
 // - client -> lista de negocios a los que está suscrito
@@ -87,5 +88,24 @@ export const mySubscriptionsDetailed = query({
       items: [],
       count: 0,
     }
+  },
+})
+// Get business subscribers
+export const getBusinessSubscribers = query({
+  args: { businessId: v.id("users") },
+  handler: async (ctx, { businessId }) => {
+    const subscriptions = await ctx.db
+      .query("subscriptions")
+      .withIndex("byBusiness", (q) => q.eq("businessId", businessId))
+      .collect()
+
+    const subscribersWithClients = await Promise.all(
+      subscriptions.map(async (sub) => {
+        const client = await ctx.db.get(sub.clientId)
+        return { ...sub, client }
+      }),
+    )
+
+    return subscribersWithClients
   },
 })

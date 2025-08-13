@@ -87,3 +87,13 @@ export const getUserQr = query({
     return null
   },
 })
+// Get QR codes for a business
+export const getBusinessQRCodes = query({
+  args: { businessId: v.id("users") },
+  handler: async (ctx, { businessId }) => {
+    return await ctx.db
+      .query("qrCodes")
+      .withIndex("by_owner", (q) => q.eq("ownerUserId", businessId))
+      .collect()
+  },
+})

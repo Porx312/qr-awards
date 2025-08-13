@@ -203,3 +203,23 @@ export const getBusinessStampsHistory = query({
     return stampsWithClients
   },
 })
+// Get stamps given by a business
+export const getBusinessStamps = query({
+  args: { businessId: v.id("users") },
+  handler: async (ctx, { businessId }) => {
+    const stamps = await ctx.db
+      .query("stamps")
+      .withIndex("byBusiness", (q) => q.eq("businessId", businessId))
+      .collect()
+
+    // Get client info for each stamp
+    const stampsWithClients = await Promise.all(
+      stamps.map(async (stamp) => {
+        const client = await ctx.db.get(stamp.clientId)
+        return { ...stamp, client }
+      }),
+    )
+
+    return stampsWithClients
+  },
+})
