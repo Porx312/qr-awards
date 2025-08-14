@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@v1/ui/button"
-import { Menu, Sparkles, LogOut, Settings, X, SidebarOpen } from "lucide-react"
+import { Menu, Sparkles, LogOut, Settings, X} from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,12 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@v1/ui/dropdown-menu"
 import { DashboardSidebar } from "./DashboardSidebar"
+import { Avatar } from "./Avatar"
 
-const mockUser = {
-  name: "Usuario Demo",
-  email: "demo@stampme.com",
-  avatarUrl: null,
-}
+
 
 export default function DashboardPage({
   children,
@@ -32,7 +29,6 @@ export default function DashboardPage({
     console.log("Settings clicked")
   }
 
-  const user = mockUser
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,50 +75,7 @@ export default function DashboardPage({
             </Link>
 
             {/* User Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 rounded-full">
-                  {user.avatarUrl ? (
-                    <img
-                      className="min-h-8 min-w-8 rounded-full object-cover"
-                      alt={user.name ?? user.email}
-                      src={user.avatarUrl || "/placeholder.svg"}
-                    />
-                  ) : (
-                    <span className="min-h-8 min-w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-56 bg-card p-2">
-                <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
-                  <p className="text-sm font-medium text-primary/80 group-hover:text-primary group-focus:text-primary">
-                    {user?.name || ""}
-                  </p>
-                  <p className="text-sm text-primary/60">{user?.email}</p>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
-                  onClick={handleSettingsClick}
-                >
-                  <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
-                    Settings
-                  </span>
-                  <Settings className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60 group-hover:text-primary group-focus:text-primary" />
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator className="mx-0 my-2" />
-                <DropdownMenuItem
-                  className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
-                  onClick={handleSignOut}
-                >
-                  <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
-                    Log Out
-                  </span>
-                  <LogOut className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60 group-hover:text-primary group-focus:text-primary" />
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              <Avatar/>
           </div>
         </div>
       </header>
